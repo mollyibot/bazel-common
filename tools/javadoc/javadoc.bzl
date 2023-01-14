@@ -47,7 +47,7 @@ def _javadoc_library(ctx):
     ]
     print("the srcs names are" + str(ctx.files.srcs))
     for f in ctx.files.srcs:
-        print("the path is" + f.path)
+        print("the path is" + f.path + "..." + f.basename)
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
