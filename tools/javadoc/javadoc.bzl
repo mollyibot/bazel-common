@@ -45,6 +45,9 @@ def _javadoc_library(ctx):
         "-Xdoclint:-missing",
         "-quiet",
     ]
+    print("the srcs names are" + str(ctx.files.srcs))
+    for f in ctx.files.srcs:
+        print("the path is" + f.path)
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
@@ -109,9 +112,9 @@ be the java_library/android_library target(s) for the same sources.
             default = "",
             doc = "Title for generated index.html. See javadoc -doctitle.",
         ),
-       "groups": attr.string_list_dict(
-          doc = "Groups specified packages together in overview page. See javadoc -groups.",
-       ),
+        "groups": attr.string_list_dict(
+            doc = "Groups specified packages together in overview page. See javadoc -groups.",
+        ),
         "root_packages": attr.string_list(
             doc = """
 Java packages to include in generated Javadoc. Any subpackages not listed in
