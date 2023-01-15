@@ -68,6 +68,7 @@ def _javadoc_library(ctx):
             "-subpackages",
             ":".join(ctx.attr.root_packages),
         ]
+        print("the if javadoc is" + str(javadoc_command))
     else:
         # Document exactly the code in the specified source files.
         for f in ctx.files.srcs:
@@ -78,7 +79,7 @@ def _javadoc_library(ctx):
                 ]
             else:
                 javadoc_command += [f.path for f in ctx.files.srcs]
-    print("the javadoc is" + str(javadoc_command))
+        print("the else javadoc is" + str(javadoc_command))
 
     #        javadoc_command += [f.path for f in ctx.files.srcs]
 
