@@ -61,6 +61,7 @@ def _javadoc_library(ctx):
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
         #    to that directory, or a subdirectory, replacing dots with slashes.
+
         javadoc_command += [
             '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
             " ".join(ctx.attr.root_packages),
@@ -77,7 +78,7 @@ def _javadoc_library(ctx):
                 ]
             else:
                 javadoc_command += [f.path for f in ctx.files.srcs]
-            print("the javadoc is" + str(javadoc_command))
+     print("the javadoc is" + str(javadoc_command))
 
     #        javadoc_command += [f.path for f in ctx.files.srcs]
 
