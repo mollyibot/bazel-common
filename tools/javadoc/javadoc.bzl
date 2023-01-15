@@ -80,7 +80,7 @@ def _javadoc_library(ctx):
             else:
                 javadoc_command += [f.path for f in ctx.files.srcs]
             print("the javadoc is")
-            print(str(javadoc_commond))
+            print(str(javadoc_command))
 
     #        javadoc_command += [f.path for f in ctx.files.srcs]
 
