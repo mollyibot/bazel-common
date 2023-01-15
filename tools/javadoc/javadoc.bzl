@@ -72,7 +72,7 @@ def _javadoc_library(ctx):
         for f in ctx.files.srcs:
             if f.is_directory:
                 javadoc_command += [
-                    "-sourcepath" + f.basename,
+                    "-sourcepath " + f.path,
                     "-subpackages elemental2.core",
                 ]
             else:
