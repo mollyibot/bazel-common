@@ -46,8 +46,13 @@ def _javadoc_library(ctx):
         "-quiet",
     ]
     print("the srcs names are" + str(ctx.files.srcs))
+
     for f in ctx.files.srcs:
         print("the path is" + f.path + "..." + f.basename)
+        print("whether the file is tree artifact: " + f.is_directory)
+    print("===============start of root=============")
+    print(ctx.attr.root_packages)
+    print("=========================================")
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
@@ -55,7 +60,7 @@ def _javadoc_library(ctx):
         # TODO(b/167433657): Reevaluate the utility of root_packages
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
-        #    to that directory, or a subdirectory, replacting dots with slashes.
+        #    to that directory, or a subdirectory, replacing dots with slashes.
         javadoc_command += [
             '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
             " ".join(ctx.attr.root_packages),
@@ -64,7 +69,20 @@ def _javadoc_library(ctx):
         ]
     else:
         # Document exactly the code in the specified source files.
-        javadoc_command += [f.path for f in ctx.files.srcs]
+        for f in ctx.files.srcs:
+            if f.is_directory:
+                javadoc_command += [
+                    "-sourcepath",
+                    " ".join(f.basename),
+                    "-subpackages",
+                    ":".join(ctx.attr.root_packages),
+                ]
+            else:
+                javadoc_command += [f.path for f in ctx.files.srcs]
+            print("the javadoc is")
+            print(str(javadoc_commond))
+
+    #        javadoc_command += [f.path for f in ctx.files.srcs]
 
     if ctx.attr.doctitle:
         javadoc_command.append('-doctitle "%s"' % ctx.attr.doctitle)
