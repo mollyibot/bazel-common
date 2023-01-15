@@ -49,7 +49,7 @@ def _javadoc_library(ctx):
 
     for f in ctx.files.srcs:
         print("the path is" + f.path + "..." + f.basename)
-        print("whether the file is tree artifact: " + f.is_directory)
+        print("whether the file is tree artifact: " + str(f.is_directory))
     print("===============start of root=============")
     print(ctx.attr.root_packages)
     print("=========================================")
@@ -79,8 +79,8 @@ def _javadoc_library(ctx):
                 ]
             else:
                 javadoc_command += [f.path for f in ctx.files.srcs]
-            print("the javadoc is")
-            print(str(javadoc_command))
+            print("the javadoc is" + str(javadoc_command))
+            
 
     #        javadoc_command += [f.path for f in ctx.files.srcs]
 
