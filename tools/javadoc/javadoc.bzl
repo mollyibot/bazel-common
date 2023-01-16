@@ -53,30 +53,30 @@ def _javadoc_library(ctx):
     print("===============start of root=============")
     print(ctx.attr.root_packages)
     print("=========================================")
+    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
-    if ctx.attr.root_packages:
-        tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
-        if len(tree_artifacts) > 0:
-            javadoc_command += [
-                "-sourcepath ",
-                ";".join(tree_artifacts),
-            ]
-        else:
-            # TODO(b/167433657): Reevaluate the utility of root_packages
-            # 1. Find the first directory under the working directory named '*java'.
-            # 2. Assume all files to document can be found by appending a root_package name
-            javadoc_command += [
-                '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
-                " ".join(ctx.attr.root_packages),
-            ]
+    if ctx.attr.root_packages and len(tree_artifacts) > 0:
         javadoc_command += [
+            "-sourcepath ",
+            ";".join(tree_artifacts),
+            "-subpackages",
+            ":".join(ctx.attr.root_packages),
+        ]
+        print("the elif javadoc is" + str(javadoc_command))
+    elif ctx.attr.root_packages:
+        # TODO(b/167433657): Reevaluate the utility of root_packages
+        # 1. Find the first directory under the working directory named '*java'.
+        # 2. Assume all files to document can be found by appending a root_package name
+        javadoc_command += [
+            '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
+            " ".join(ctx.attr.root_packages),
             "-subpackages",
             ":".join(ctx.attr.root_packages),
         ]
 
-        print("the if javadoc is" + str(javadoc_command))
+        print("the elif javadoc is" + str(javadoc_command))
     else:
         # Document exactly the code in the specified source files.
         javadoc_command += [f.path for f in ctx.files.srcs]
