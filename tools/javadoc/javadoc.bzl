@@ -54,6 +54,7 @@ def _javadoc_library(ctx):
     print(ctx.attr.root_packages)
     print("=========================================")
     tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
+    print("tree artifacts is" + str(tree_artifacts))
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
