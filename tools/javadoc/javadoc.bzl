@@ -60,26 +60,33 @@ def _javadoc_library(ctx):
         # TODO(b/167433657): Reevaluate the utility of root_packages
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
-        #    to that directory, or a subdirectory, replacing dots with slashes.
-        #        cd /usr/local/google/home/mollyibot/.cache/bazel/_bazel_mollyibot/b4d3b588d7fd2fccd32d6482e10b2767/execroot/com_google_elemental2 && \
-        #          exec env - \
-        #          /bin/bash -c 'external/local_jdk/bin/javadoc -use -encoding UTF8 -classpath bazel-out/k8-fastbuild/bin/java/elemental2/core/libcore-hjar.jar:bazel-out/k8-fastbuild/bin/java/elemental2/promise/libpromise-hjar.jar:bazel-out/k8-fastbuild/bin/external/com_google_jsinterop_annotations-j2cl/java/jsinterop/annotations/libannotations-hjar.jar:bazel-out/k8-fastbuild/bin/external/com_google_jsinterop_base/java/jsinterop/base/libbase-hjar.jar:bazel-out/k8-fastbuild/bin/external/com_google_j2cl/jre/java/libjavaemul_internal_annotations-hjar.jar:bazel-out/k8-fastbuild/bin/third_party/libgwt-array-stamper-hjar.jar -notimestamp -d bazel-out/k8-fastbuild/bin/java/elemental2/dom/dom-javadoc_javadoc -Xdoclint:-missing -quiet -sourcepath $(find * -type d -name "*java" -print0 | tr "\0" :) elemental2.dom -subpackages elemental2.dom && external/local_jdk/bin/jar cf bazel-out/k8-fastbuild/bin/java/elemental2/dom/dom-javadoc.jar -C bazel-out/k8-fastbuild/bin/java/elemental2/dom/dom-javadoc_javadoc .'
-        javadoc_command += [
-            '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
-            " ".join(ctx.attr.root_packages),
-            "-subpackages",
-            ":".join(ctx.attr.root_packages),
-        ]
-        print("the if javadoc is" + str(javadoc_command))
-    else:
-        # Document exactly the code in the specified source files.
         for f in ctx.files.srcs:
             if f.is_directory:
                 javadoc_command += [
-                    "-sourcepath " + f.path,
+                    "-sourcepath ",
+                    ";".join(ctx.attr.root_packages),
                 ]
             else:
                 javadoc_command += [f.path for f in ctx.files.srcs]
+        javadoc_command += [
+            '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
+            " ".join(ctx.attr.root_packages),
+        ]
+        tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
+        if len(tree_artifacts) > 0:
+            javadoc_command += [
+                ";",
+                ";".join(tree_artifacts),
+            ]
+        javadoc_command += [
+            "-subpackages",
+            ":".join(ctx.attr.root_packages),
+        ]
+
+        print("the if javadoc is" + str(javadoc_command))
+    else:
+        # Document exactly the code in the specified source files.
+        javadoc_command += [f.path for f in ctx.files.srcs]
         print("the else javadoc is" + str(javadoc_command))
 
     #        javadoc_command += [f.path for f in ctx.files.srcs]
