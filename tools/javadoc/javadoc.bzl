@@ -57,26 +57,19 @@ def _javadoc_library(ctx):
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
     if ctx.attr.root_packages:
-        # TODO(b/167433657): Reevaluate the utility of root_packages
-        # 1. Find the first directory under the working directory named '*java'.
-        # 2. Assume all files to document can be found by appending a root_package name
-        for f in ctx.files.srcs:
-            if f.is_directory:
-                javadoc_command += [
-                    "-sourcepath ",
-                    ";".join(ctx.attr.root_packages),
-                ]
-            else:
-                javadoc_command += [f.path for f in ctx.files.srcs]
-        javadoc_command += [
-            '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
-            " ".join(ctx.attr.root_packages),
-        ]
         tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
         if len(tree_artifacts) > 0:
             javadoc_command += [
-                ";",
+                "-sourcepath ",
                 ";".join(tree_artifacts),
+            ]
+        else:
+            # TODO(b/167433657): Reevaluate the utility of root_packages
+            # 1. Find the first directory under the working directory named '*java'.
+            # 2. Assume all files to document can be found by appending a root_package name
+            javadoc_command += [
+                '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
+                " ".join(ctx.attr.root_packages),
             ]
         javadoc_command += [
             "-subpackages",
