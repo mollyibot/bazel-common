@@ -86,10 +86,13 @@ def _javadoc_library(ctx):
         print("the elif javadoc is" + str(javadoc_command))
     else:
         # Document exactly the code in the specified source files.
-        javadoc_command += [f.path for f in ctx.files.srcs]
+        #        javadoc_command += [f.path for f in ctx.files.srcs]
+        java_srcs = [f.path for f in ctx.files.srcs]
+        print("the java srcs are" + str(java_srcs))
+        args.add_all(java_srcs)
         for f in ctx.files.srcs:
             print("the args path is ..." + str(f.path))
-            print("the args path is ..." + str(f))
+            print("the arg fileh is ..." + str(f))
 
     #        args.add_all()
 
