@@ -56,6 +56,8 @@ def _javadoc_library(ctx):
 
     tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
     print("tree artifacts is" + str(tree_artifacts))
+    for f in tree_artifacts:
+        print("the expansion is " + str(ctx.expand_location(tree_artifacts)))
 
     #    for tree_artifact in tree_artifacts:
     #        for src_file in ctx.expand_location(ctx.files.srcs):
@@ -88,7 +90,7 @@ def _javadoc_library(ctx):
         # Document exactly the code in the specified source files.
         #        javadoc_command += [f.path for f in ctx.files.srcs]
         java_srcs = [f.path for f in ctx.files.srcs]
-        print("the java srcs are" + str(java_srcs))
+        print("tche java srcs are" + str(java_srcs))
         args.add_all(java_srcs)
         for f in ctx.files.srcs:
             print("the args path is ..." + str(f.path))
