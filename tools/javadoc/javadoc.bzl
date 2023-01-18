@@ -135,7 +135,7 @@ def _javadoc_library(ctx):
     srcs = depset(transitive = [src.files for src in ctx.attr.srcs]).to_list()
     ctx.actions.run_shell(
         inputs = srcs + classpath + ctx.files._jdk,
-        command = "%s $2" % (" ".join(javadoc_command)),
+        command = "%s $@" % (" ".join(javadoc_command)),
         arguments = [args],
         outputs = [output_dir, ctx.outputs.jar],
     )
