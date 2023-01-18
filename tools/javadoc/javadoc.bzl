@@ -94,7 +94,7 @@ def _javadoc_library(ctx):
         # Document exactly the code in the specified source files.
         #        javadoc_command += [f.path for f in ctx.files.srcs]
         #        java_srcs = [f.path for f in ctx.files.srcs]
-        print("tche java srcs are" + str(java_srcs))
+#        print("tche java srcs are" + str(java_srcs))
         args.add_all(ctx.files.srcs, map_each = _file_mapper)
         for f in ctx.files.srcs:
             print("the args path is ..." + str(f.path))
