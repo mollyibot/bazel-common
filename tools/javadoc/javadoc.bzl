@@ -47,18 +47,18 @@ def _javadoc_library(ctx):
     ]
     print("the srcs names are" + str(ctx.files.srcs))
 
-    for f in ctx.attr.srcs:
-        #        print("the path is" + f.path + "..." + f.basename)
-        print("whether the file is tree artifact: " + str(f.is_directory))
-    print("===============start of root=============")
-    print(ctx.attr.root_packages)
-    print("=========================================")
+    #    for f in ctx.attr.srcs:
+    #        #        print("the path is" + f.path + "..." + f.basename)
+    #        print("whether the file is tree artifact: " + str(f.is_directory))
+    #    print("===============start of root=============")
+    #    print(ctx.attr.root_packages)
+    #    print("=========================================")
 
-    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
-    print("tree artifacts is" + str(tree_artifacts))
-    for f in ctx.files.srcs:
+    #    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
+    #    print("tree artifacts is" + str(tree_artifacts))
+    for f in ctx.attr.srcs:
         #        ctx.expand_location("$(location %s)" % d.label, [d])
-        print("the expansion is " + str(ctx.expand_location("$(location %s)" % f.label, [f])))
+        print("the expansion is " + str(ctx.expand_location("$(locations)", [f])))
 
     #    for tree_artifact in tree_artifacts:
     #        for src_file in ctx.expand_location(ctx.files.srcs):
