@@ -54,13 +54,14 @@ def _javadoc_library(ctx):
     #    print(ctx.attr.root_packages)
     #    print("=========================================")
 
-    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
+    #    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
 
     #    print("tree artifacts is" + str(tree_artifacts))
-    for f in tree_artifacts:
+    for f in ctx.attr.src:
         #        ctx.expand_location("$(location %s)" % d.label, [d])
-        #        print("the expansion is " + str(ctx.expand_location("$(location)" % f.label, [f])))
-        print("the expansion is ..." + str(native.glob([f])))
+        print("the expansion is " + str("$(location boringssl/src/crypto/fipsmodule/bcm.c)", [f])))
+
+    #        print("the expansion is ..." + str(native.glob([f])))
 
     #    for tree_artifact in tree_artifacts:
     #        for src_file in ctx.expand_location(ctx.files.srcs):
