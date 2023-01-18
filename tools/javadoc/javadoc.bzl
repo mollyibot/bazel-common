@@ -89,6 +89,8 @@ def _javadoc_library(ctx):
         javadoc_command += [f.path for f in ctx.files.srcs]
         for f in ctx.files.srcs:
             print("the args path is ..." + str(f.path))
+            print("the args path is ..." + str(f))
+
     #        args.add_all()
 
     #        [s for s in srcs if _is_kt_src(s)]
