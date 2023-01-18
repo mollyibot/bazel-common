@@ -53,6 +53,9 @@ def _javadoc_library(ctx):
     print("===============start of root=============")
     print(ctx.attr.root_packages)
     print("=========================================")
+    for src_file in ctx.expand_location(ctx.files.srcs):
+        print("there is a location " + str(src_file))
+
     tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
     print("tree artifacts is" + str(tree_artifacts))
 
@@ -65,8 +68,8 @@ def _javadoc_library(ctx):
             "-subpackages",
             ":".join(ctx.attr.root_packages),
         ]
-        print("the elif javadoc is" + str(javadoc_command))
-    elif ctx.attr.root_packages:
+        print("the if javadoc is" + str(javadoc_command))
+    if ctx.attr.root_packages:
         # TODO(b/167433657): Reevaluate the utility of root_packages
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
