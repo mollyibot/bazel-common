@@ -59,7 +59,7 @@ def _javadoc_library(ctx):
     #    print("tree artifacts is" + str(tree_artifacts))
     for f in ctx.attr.src:
         #        ctx.expand_location("$(location %s)" % d.label, [d])
-        print("the expansion is " + str("$(location boringssl/src/crypto/fipsmodule/bcm.c)", [f])))
+        print("the expansion is " + str("$(location boringssl/src/crypto/fipsmodule/bcm.c)", [f]))
 
     #        print("the expansion is ..." + str(native.glob([f])))
 
