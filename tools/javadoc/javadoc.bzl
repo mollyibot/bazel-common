@@ -57,9 +57,9 @@ def _javadoc_library(ctx):
     #    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
 
     #    print("tree artifacts is" + str(tree_artifacts))
-    for f in ctx.attr.srcs:
-        #        ctx.expand_location("$(location %s)" % d.label, [d])
-        print("the expansion is " + str(ctx.expand_location("$(location boringssl/src/crypto/fipsmodule/bcm.c)", [f])))
+    #    for f in ctx.attr.srcs:
+    #        #        ctx.expand_location("$(location %s)" % d.label, [d])
+    #        print("the expansion is " + str(ctx.expand_location("$(location boringssl/src/crypto/fipsmodule/bcm.c)", [f])))
 
     #        print("the expansion is ..." + str(native.glob([f])))
 
@@ -93,9 +93,9 @@ def _javadoc_library(ctx):
     else:
         # Document exactly the code in the specified source files.
         #        javadoc_command += [f.path for f in ctx.files.srcs]
-        java_srcs = [f.path for f in ctx.files.srcs]
-        print("tche java srcs are" + str(java_srcs))
-        args.add_all(java_srcs)
+        #        java_srcs = [f.path for f in ctx.files.srcs]
+        #        print("tche java srcs are" + str(java_srcs))
+        args.add_all(ctx.files.srcs, map_each = _file_mapper)
         for f in ctx.files.srcs:
             print("the args path is ..." + str(f.path))
             print("the arg fileh is ..." + str(f))
@@ -136,6 +136,12 @@ def _javadoc_library(ctx):
         arguments = [args],
         outputs = [output_dir, ctx.outputs.jar],
     )
+
+def _file_mapper(f, directory_expander):
+    """Expands a file or directory into command line arguments."""
+    a = [f.path for f in directory_expander.expand(f) if f.is_directory]
+    print("the files are.." + a)
+    return a
 
 javadoc_library = rule(
     attrs = {
