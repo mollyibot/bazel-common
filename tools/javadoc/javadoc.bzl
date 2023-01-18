@@ -57,7 +57,7 @@ def _javadoc_library(ctx):
     #    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
 
     #    print("tree artifacts is" + str(tree_artifacts))
-    for f in ctx.attr.src:
+    for f in ctx.attr.srcs:
         #        ctx.expand_location("$(location %s)" % d.label, [d])
         print("the expansion is " + str("$(location boringssl/src/crypto/fipsmodule/bcm.c)", [f]))
 
