@@ -98,6 +98,7 @@ def _javadoc_library(ctx):
         #        java_srcs = [f.path for f in ctx.files.srcs]
         #        print("tche java srcs are" + str(java_srcs))
         args.add_all(ctx.files.srcs)
+        print("the args is.." + str(args))
         for f in ctx.files.srcs:
             print("the args path is ..." + str(f.path))
             print("the arg fileh is ..." + str(f))
