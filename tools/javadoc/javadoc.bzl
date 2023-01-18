@@ -53,11 +53,14 @@ def _javadoc_library(ctx):
     print("===============start of root=============")
     print(ctx.attr.root_packages)
     print("=========================================")
-    for src_file in ctx.expand_location(ctx.files.srcs):
-        print("there is a location " + str(src_file))
 
     tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
     print("tree artifacts is" + str(tree_artifacts))
+
+    #    for tree_artifact in tree_artifacts:
+    #        for src_file in ctx.expand_location(ctx.files.srcs):
+    #            print("there is a location " + str(src_file))
+    args = ctx.actions.args()
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
@@ -84,7 +87,11 @@ def _javadoc_library(ctx):
     else:
         # Document exactly the code in the specified source files.
         javadoc_command += [f.path for f in ctx.files.srcs]
-        print("the else javadoc is" + str(javadoc_command))
+
+    #        args.add_all()
+
+    #        [s for s in srcs if _is_kt_src(s)]
+    #        print("the else javadoc is" + str(javadoc_command))
 
     #        javadoc_command += [f.path for f in ctx.files.srcs]
 
@@ -113,7 +120,8 @@ def _javadoc_library(ctx):
     srcs = depset(transitive = [src.files for src in ctx.attr.srcs]).to_list()
     ctx.actions.run_shell(
         inputs = srcs + classpath + ctx.files._jdk,
-        command = "%s && %s" % (" ".join(javadoc_command), jar_command),
+        command = "%s $1 && %s" % (" ".join(javadoc_command), jar_command),
+        arguments = [args],
         outputs = [output_dir, ctx.outputs.jar],
     )
 
