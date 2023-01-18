@@ -30,6 +30,8 @@ def _javadoc_library(ctx):
 
     classpath = depset([], transitive = transitive_deps).to_list()
 
+    print("the classpath is" + str(classpath))
+
     java_home = str(ctx.attr._jdk[java_common.JavaRuntimeInfo].java_home)
 
     output_dir = ctx.actions.declare_directory("%s_javadoc" % ctx.attr.name)
@@ -94,7 +96,7 @@ def _javadoc_library(ctx):
         # Document exactly the code in the specified source files.
         #        javadoc_command += [f.path for f in ctx.files.srcs]
         #        java_srcs = [f.path for f in ctx.files.srcs]
-#        print("tche java srcs are" + str(java_srcs))
+        #        print("tche java srcs are" + str(java_srcs))
         args.add_all(ctx.files.srcs, map_each = _file_mapper)
         for f in ctx.files.srcs:
             print("the args path is ..." + str(f.path))
