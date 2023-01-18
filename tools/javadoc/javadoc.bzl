@@ -48,7 +48,7 @@ def _javadoc_library(ctx):
     print("the srcs names are" + str(ctx.files.srcs))
 
     for f in ctx.attr.srcs:
-        print("the path is" + f.path + "..." + f.basename)
+        #        print("the path is" + f.path + "..." + f.basename)
         print("whether the file is tree artifact: " + str(f.is_directory))
     print("===============start of root=============")
     print(ctx.attr.root_packages)
