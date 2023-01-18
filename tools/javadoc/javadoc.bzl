@@ -64,14 +64,14 @@ def _javadoc_library(ctx):
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
-    if ctx.attr.root_packages and len(tree_artifacts) > 0:
-        javadoc_command += [
-            "-sourcepath ",
-            ";".join(tree_artifacts),
-            "-subpackages",
-            ":".join(ctx.attr.root_packages),
-        ]
-        print("the if javadoc is" + str(javadoc_command))
+    #    if ctx.attr.root_packages and len(tree_artifacts) > 0:
+    #        javadoc_command += [
+    #            "-sourcepath ",
+    #            ";".join(tree_artifacts),
+    #            "-subpackages",
+    #            ":".join(ctx.attr.root_packages),
+    #        ]
+    #        print("the if javadoc is" + str(javadoc_command))
     if ctx.attr.root_packages:
         # TODO(b/167433657): Reevaluate the utility of root_packages
         # 1. Find the first directory under the working directory named '*java'.
