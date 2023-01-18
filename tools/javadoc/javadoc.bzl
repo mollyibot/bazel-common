@@ -140,7 +140,7 @@ def _javadoc_library(ctx):
 def _file_mapper(f, directory_expander):
     """Expands a file or directory into command line arguments."""
     a = [f.path for f in directory_expander.expand(f) if f.is_directory]
-    print("the files are.." + a)
+    print("the files are.." + str(a))
     return a
 
 javadoc_library = rule(
