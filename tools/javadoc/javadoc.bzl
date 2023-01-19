@@ -74,8 +74,7 @@ def _javadoc_library(ctx):
     javadoc_arguments.add_joined("-exclude", ctx.attr.exclude_packages, join_with = ":")
 
     for link in ctx.attr.external_javadoc_links:
-        javadoc_arguments.add("-linkoffline", link)
-        javadoc_arguments.add(link)
+        javadoc_arguments.add("-linkoffline", "{0} {0}".format(link))
 
     if ctx.attr.bottom_text:
         javadoc_arguments.add("-bottom", ctx.attr.bottom_text, format = '"%s"')
