@@ -63,7 +63,7 @@ def _javadoc_library(ctx):
         javadoc_arguments.add_all(ctx.files.srcs)
 
     if ctx.attr.doctitle:
-        javadoc_arguments.add("-doctitle", ctx.attr.doctitle, format = '"%s"')
+        javadoc_arguments.add("-doctitle", ctx.attr.doctitle, format = "%s")
 
     if ctx.attr.groups:
         groups = []
@@ -77,7 +77,7 @@ def _javadoc_library(ctx):
         javadoc_arguments.add("-linkoffline", "{0} {0}".format(link))
 
     if ctx.attr.bottom_text:
-        javadoc_arguments.add("-bottom", ctx.attr.bottom_text, format = '"%s"')
+        javadoc_arguments.add("-bottom", ctx.attr.bottom_text, format = '%s')
 
     # TODO(ronshapiro): Should we be using a different tool that doesn't include
     # timestamp info?
