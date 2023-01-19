@@ -36,6 +36,7 @@ def _javadoc_library(ctx):
 
     javadoc_arguments = ctx.actions.args()
     javadoc_arguments.use_param_file("@%s", use_always = True)
+    javadoc_arguments.set_param_file_format("multiline")
     javadoc_command = java_home + "/bin/javadoc"
     javadoc_arguments.add("-use")
     javadoc_arguments.add("-encoding", "UTF8")
