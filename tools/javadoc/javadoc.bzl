@@ -30,103 +30,56 @@ def _javadoc_library(ctx):
 
     classpath = depset([], transitive = transitive_deps).to_list()
 
-    print("the classpath is" + str(classpath))
-
     java_home = str(ctx.attr._jdk[java_common.JavaRuntimeInfo].java_home)
 
     output_dir = ctx.actions.declare_directory("%s_javadoc" % ctx.attr.name)
 
-    javadoc_command = [
-        java_home + "/bin/javadoc",
-        "-use",
-        "-encoding UTF8",
-        "-classpath",
-        ":".join([jar.path for jar in classpath]),
-        "-notimestamp",
-        "-d %s" % output_dir.path,
-        "-Xdoclint:-missing",
-        "-quiet",
-    ]
-    print("the srcs names are" + str(ctx.files.srcs))
+    javadoc_arguments = ctx.actions.args()
+    javadoc_arguments.use_param_file("@%s", use_always = True)
+    javadoc_arguments.set_param_file_format("multiline")
 
-    #    for f in ctx.attr.srcs:
-    #        #        print("the path is" + f.path + "..." + f.basename)
-    #        print("whether the file is tree artifact: " + str(f.is_directory))
-    #    print("===============start of root=============")
-    #    print(ctx.attr.root_packages)
-    #    print("=========================================")
-
-    #    tree_artifacts = [f.path for f in ctx.files.srcs if f.is_directory]
-
-    #    print("tree artifacts is" + str(tree_artifacts))
-    #    for f in ctx.attr.srcs:
-    #        #        ctx.expand_location("$(location %s)" % d.label, [d])
-    #        print("the expansion is " + str(ctx.expand_location("$(location boringssl/src/crypto/fipsmodule/bcm.c)", [f])))
-
-    #        print("the expansion is ..." + str(native.glob([f])))
-
-    #    for tree_artifact in tree_artifacts:
-    #        for src_file in ctx.expand_location(ctx.files.srcs):
-    #            print("there is a location " + str(src_file))
-    args = ctx.actions.args()
+    javadoc_arguments.add("-use")
+    javadoc_arguments.add("-encoding", "UTF8")
+    javadoc_arguments.add_joined("-classpath", classpath, join_with = ":")
+    javadoc_arguments.add("-notimestamp")
+    javadoc_arguments.add("-d", output_dir)
+    javadoc_arguments.add("-Xdoclint:-missing")
+    javadoc_arguments.add("-quiet")
 
     # Documentation for the javadoc command
     # https://docs.oracle.com/javase/9/javadoc/javadoc-command.htm
-    #    if ctx.attr.root_packages and len(tree_artifacts) > 0:
-    #        javadoc_command += [
-    #            "-sourcepath ",
-    #            ";".join(tree_artifacts),
-    #            "-subpackages",
-    #            ":".join(ctx.attr.root_packages),
-    #        ]
-    #        print("the if javadoc is" + str(javadoc_command))
     if ctx.attr.root_packages:
         # TODO(b/167433657): Reevaluate the utility of root_packages
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
-        javadoc_command += [
-            '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
-            " ".join(ctx.attr.root_packages),
-            "-subpackages",
-            ":".join(ctx.attr.root_packages),
-        ]
+        #    to that directory, or a subdirectory, replacing dots with slashes.
+        javadoc_arguments.add("-sourcepath", "$(find * -type d -name \"*java\" -print0 | tr \"\\0\" :)")
+        javadoc_arguments.add_all(ctx.attr.root_packages)
+        javadoc_arguments.add_joined("-subpackages", ctx.attr.root_packages, join_with = ":")
 
-        print("the elif javadoc is" + str(javadoc_command))
     else:
         # Document exactly the code in the specified source files.
-        #        javadoc_command += [f.path for f in ctx.files.srcs]
-        #        java_srcs = [f.path for f in ctx.files.srcs]
-        #        print("tche java srcs are" + str(java_srcs))
-        args.add_all(ctx.files.srcs)
-        print("the args is.." + str(args))
-        for f in ctx.files.srcs:
-            print("the args path is ..." + str(f.path))
-            print("the arg fileh is ..." + str(f))
-
-    #        args.add_all()
-
-    #        [s for s in srcs if _is_kt_src(s)]
-    #        print("the else javadoc is" + str(javadoc_command))
-
-    #        javadoc_command += [f.path for f in ctx.files.srcs]
+        javadoc_arguments.add_all(ctx.files.srcs)
 
     if ctx.attr.doctitle:
-        javadoc_command.append('-doctitle "%s"' % ctx.attr.doctitle)
+        javadoc_arguments.add("-doctitle", ctx.attr.doctitle)
 
     if ctx.attr.groups:
         groups = []
         for k, v in ctx.attr.groups.items():
             groups.append("-group \"%s\" \"%s\"" % (k, ":".join(v)))
-        javadoc_command.append(" ".join(groups))
+        javadoc_arguments.add_all(groups)
 
-    if ctx.attr.exclude_packages:
-        javadoc_command.append("-exclude %s" % ":".join(ctx.attr.exclude_packages))
+    javadoc_arguments.add_joined("-exclude", ctx.attr.exclude_packages, join_with = ":")
 
-    for link in ctx.attr.external_javadoc_links:
-        javadoc_command.append("-linkoffline {0} {0}".format(link))
+    javadoc_arguments.add_all("-linkoffline", ctx.attr.external_javadoc_links, map_each = _format_linkoffline_value)
 
     if ctx.attr.bottom_text:
-        javadoc_command.append("-bottom '%s'" % ctx.attr.bottom_text)
+        javadoc_arguments.add("-bottom", ctx.attr.bottom_text)
+
+    javadoc_command = java_home + "/bin/javadoc"
+
+    srcs = depset(transitive = [src.files for src in ctx.attr.srcs]).to_list()
 
     # TODO(ronshapiro): Should we be using a different tool that doesn't include
     # timestamp info?
@@ -135,10 +88,13 @@ def _javadoc_library(ctx):
     srcs = depset(transitive = [src.files for src in ctx.attr.srcs]).to_list()
     ctx.actions.run_shell(
         inputs = srcs + classpath + ctx.files._jdk,
-        command = "%s $@ && %s" % (" ".join(javadoc_command), jar_command),
-        arguments = [args],
+        command = "%s $@ && %s" % (javadoc_command, jar_command),
+        arguments = [javadoc_arguments],
         outputs = [output_dir, ctx.outputs.jar],
     )
+
+def _format_linkoffline_value(link):
+    return "{0} {0}".format(link)
 
 def _file_mapper(f, directory_expander):
     """Expands a file or directory into command line arguments."""
