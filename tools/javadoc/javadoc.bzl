@@ -35,10 +35,10 @@ def _javadoc_library(ctx):
     output_dir = ctx.actions.declare_directory("%s_javadoc" % ctx.attr.name)
 
     javadoc_arguments = ctx.actions.args()
+    javadoc_command = [java_home + "/bin/javadoc"]
     javadoc_arguments.use_param_file("@%s", use_always = True)
     javadoc_arguments.set_param_file_format("multiline")
 
-    javadoc_arguments.add(java_home + "/bin/javadoc")
     javadoc_arguments.add("-use")
     javadoc_arguments.add("-encoding", "UTF8")
     javadoc_arguments.add_joined("-classpath", classpath, join_with = ":")
@@ -54,10 +54,12 @@ def _javadoc_library(ctx):
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
         #    to that directory, or a subdirectory, replacing dots with slashes.
-        javadoc_arguments.add("-sourcepath", "$(find * -type d -name \"*java\" -print0 | tr \"\\0\" :)")
+        javadoc_command += [
+            '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
+            " ".join(ctx.attr.root_packages),
+        ]
         javadoc_arguments.add_all(ctx.attr.root_packages)
         javadoc_arguments.add_joined("-subpackages", ctx.attr.root_packages, join_with = ":")
-
     else:
         # Document exactly the code in the specified source files.
         javadoc_arguments.add_all(ctx.files.srcs)
@@ -78,10 +80,6 @@ def _javadoc_library(ctx):
     if ctx.attr.bottom_text:
         javadoc_arguments.add("-bottom", ctx.attr.bottom_text)
 
-    javadoc_command = java_home + "/bin/javadoc"
-
-    srcs = depset(transitive = [src.files for src in ctx.attr.srcs]).to_list()
-
     # TODO(ronshapiro): Should we be using a different tool that doesn't include
     # timestamp info?
     jar_command = "%s/bin/jar cf %s -C %s ." % (java_home, ctx.outputs.jar.path, output_dir.path)
@@ -89,7 +87,7 @@ def _javadoc_library(ctx):
     srcs = depset(transitive = [src.files for src in ctx.attr.srcs]).to_list()
     ctx.actions.run_shell(
         inputs = srcs + classpath + ctx.files._jdk,
-        command = "%s $@ && %s" % (javadoc_command, jar_command),
+        command = "%s $@ && %s" % (" ".join(javadoc_command), jar_command),
         arguments = [javadoc_arguments],
         outputs = [output_dir, ctx.outputs.jar],
     )
