@@ -69,11 +69,11 @@ def _javadoc_library(ctx):
         groups = []
         for k, v in ctx.attr.groups.items():
             groups.append("-group \"%s\" \"%s\"" % (k, ":".join(v)))
-        javadoc_arguments.add_all(groups)
+        javadoc_arguments.add(" ".join(groups))
 
     javadoc_arguments.add_joined("-exclude", ctx.attr.exclude_packages, join_with = ":")
 
-    javadoc_arguments.add_all("-linkoffline", ctx.attr.external_javadoc_links, map_each = _format_linkoffline_value)
+    javadoc_arguments.add_all(ctx.attr.external_javadoc_links, map_each = _format_linkoffline_value)
 
     if ctx.attr.bottom_text:
         javadoc_arguments.add("-bottom", ctx.attr.bottom_text)
@@ -91,7 +91,7 @@ def _javadoc_library(ctx):
     )
 
 def _format_linkoffline_value(link):
-    return "{0} {0}".format(link)
+    return "-linkoffline {0} {0}".format(link)
 
 def _file_mapper(f, directory_expander):
     """Expands a file or directory into command line arguments."""
