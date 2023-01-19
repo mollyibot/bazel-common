@@ -78,7 +78,7 @@ def _javadoc_library(ctx):
         javadoc_arguments.add(link)
 
     if ctx.attr.bottom_text:
-        javadoc_arguments.add("-bottom", ctx.attr.bottom_text)
+        javadoc_arguments.add("-bottom", ctx.attr.bottom_text, format = '"%s"')
 
     # TODO(ronshapiro): Should we be using a different tool that doesn't include
     # timestamp info?
