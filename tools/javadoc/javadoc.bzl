@@ -36,7 +36,7 @@ def _javadoc_library(ctx):
 
     javadoc_arguments = ctx.actions.args()
     javadoc_arguments.use_param_file("@%s", use_always = True)
-    javadoc_command = [java_home + "/bin/javadoc"]
+    javadoc_command = java_home + "/bin/javadoc"
     javadoc_arguments.add("-use")
     javadoc_arguments.add("-encoding", "UTF8")
     javadoc_arguments.add_joined("-classpath", classpath, join_with = ":")
@@ -52,10 +52,8 @@ def _javadoc_library(ctx):
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
         #    to that directory, or a subdirectory, replacing dots with slashes.
-        javadoc_command += [
-            '-sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :)',
-            " ".join(ctx.attr.root_packages),
-        ]
+        javadoc_command += ' -sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :) '
+        javadoc_arguments.add_all(ctx.attr.root_packages)
 
         javadoc_arguments.add_joined("-subpackages", ctx.attr.root_packages, join_with = ":")
     else:
