@@ -44,7 +44,7 @@ def _javadoc_library(ctx):
     javadoc_arguments.add("-encoding", "UTF8")
     javadoc_arguments.add_joined("-classpath", classpath, join_with = ":")
     javadoc_arguments.add("-notimestamp")
-    javadoc_arguments.add("-d", output_dir)
+    javadoc_arguments.add("-d", output_dir.path)
     javadoc_arguments.add("-Xdoclint:-missing")
     javadoc_arguments.add("-quiet")
 
