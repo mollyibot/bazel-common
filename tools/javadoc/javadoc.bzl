@@ -68,7 +68,7 @@ def _javadoc_library(ctx):
         for k, v in ctx.attr.groups.items():
             groups.append("\"%s\" \"%s\"" % (k, ":".join(v)))
         for each in groups:
-            javadoc_arguments.add("-group", str(each))
+            javadoc_arguments.add("-group", each)
 
     javadoc_arguments.add_joined("-exclude", ctx.attr.exclude_packages, join_with = ":")
 
