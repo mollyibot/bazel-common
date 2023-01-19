@@ -62,7 +62,7 @@ def _javadoc_library(ctx):
         javadoc_arguments.add_all(ctx.files.srcs)
 
     if ctx.attr.doctitle:
-        javadoc_arguments.add("-doctitle", ctx.attr.doctitle)
+        javadoc_arguments.add("-doctitle", ctx.attr.doctitle, format = '"%s"')
 
     if ctx.attr.groups:
         groups = []
