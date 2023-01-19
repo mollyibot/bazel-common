@@ -37,7 +37,9 @@ def _javadoc_library(ctx):
     javadoc_arguments = ctx.actions.args()
     javadoc_arguments.use_param_file("@%s", use_always = True)
     javadoc_arguments.set_param_file_format("multiline")
+
     javadoc_command = java_home + "/bin/javadoc"
+
     javadoc_arguments.add("-use")
     javadoc_arguments.add("-encoding", "UTF8")
     javadoc_arguments.add_joined("-classpath", classpath, join_with = ":")
@@ -53,9 +55,8 @@ def _javadoc_library(ctx):
         # 1. Find the first directory under the working directory named '*java'.
         # 2. Assume all files to document can be found by appending a root_package name
         #    to that directory, or a subdirectory, replacing dots with slashes.
-        javadoc_arguments.add("-sourcepath", "$(find * -type d -name \"*java\" -print0 | tr \"\\0\" :)")
+        javadoc_command += ' -sourcepath $(find * -type d -name "*java" -print0 | tr "\\0" :) '
         javadoc_arguments.add_all(ctx.attr.root_packages)
-
         javadoc_arguments.add_joined("-subpackages", ctx.attr.root_packages, join_with = ":")
     else:
         # Document exactly the code in the specified source files.
@@ -89,6 +90,7 @@ def _javadoc_library(ctx):
         arguments = [javadoc_arguments],
         outputs = [output_dir, ctx.outputs.jar],
     )
+
 
 def _file_mapper(f, directory_expander):
     """Expands a file or directory into command line arguments."""
