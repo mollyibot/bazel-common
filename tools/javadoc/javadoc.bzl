@@ -73,11 +73,10 @@ def _javadoc_library(ctx):
 
     javadoc_arguments.add_joined("-exclude", ctx.attr.exclude_packages, join_with = ":")
 
-    for link in ctx.attr.external_javadoc_links:
-        javadoc_arguments.add("-linkoffline", "{0} {0}".format(link))
+    javadoc_arguments.add_all("-linkoffline", ctx.attr.external_javadoc_links, map_each = _format_linkoffline_value)
 
     if ctx.attr.bottom_text:
-        javadoc_arguments.add("-bottom", ctx.attr.bottom_text, format = '%s')
+        javadoc_arguments.add("-bottom", ctx.attr.bottom_text, format = "%s")
 
     # TODO(ronshapiro): Should we be using a different tool that doesn't include
     # timestamp info?
@@ -90,6 +89,9 @@ def _javadoc_library(ctx):
         arguments = [javadoc_arguments],
         outputs = [output_dir, ctx.outputs.jar],
     )
+
+def _format_linkoffline_value(link):
+    return "{0} {0}".format(link)
 
 def _file_mapper(f, directory_expander):
     """Expands a file or directory into command line arguments."""
