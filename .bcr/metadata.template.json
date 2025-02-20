@@ -8,7 +8,7 @@
     }
   ],
   "repository": [
-    "github:google/bazel-common"
+    "github:mollyibot/bazel-common"
   ],
   "versions": [],
   "yanked_versions": {}
