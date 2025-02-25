@@ -1,5 +1,5 @@
 {
-  "homepage": "https://github.com/google/bazel-common",
+  "homepage": "https://github.com/mollyibot/bazel-common",
   "maintainers": [
     {
       "name": "Chris Povirk",
@@ -8,7 +8,7 @@
     }
   ],
   "repository": [
-    "github:google/bazel-common"
+    "github:mollyibot/bazel-common"
   ],
   "versions": [],
   "yanked_versions": {}
